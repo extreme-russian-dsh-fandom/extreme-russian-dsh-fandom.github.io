@@ -575,8 +575,9 @@ def main() -> int:
         # DSH derives both from `source.commit` itself.
         document = {
             "format": 1,
+            # A brand name, so it is the same in every language.
+            "title": site["index_title"],
             # Localized strings may be an object, but `en` is mandatory there.
-            "title": {"en": site["index_title"], "ru": site["index_title_ru"]},
             "description": {"en": site["index_description"], "ru": site["index_description_ru"]},
             "metadata": {
                 "categories": {

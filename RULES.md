@@ -68,7 +68,7 @@ is not rejected with "not in a valid format".
 ```jsonc
 {
   "format": 1,
-  "title": { "en": "DSH plugins", "ru": "Плагины DSH" },
+  "title": "EXTREME RUSSIAN DSH FANDOM",   // a brand: one string for every language
   "description": { "en": "…", "ru": "…" },
   "metadata": {
     "categories": { "dev": { "title": { "en": "Development", "ru": "Разработка" } } },

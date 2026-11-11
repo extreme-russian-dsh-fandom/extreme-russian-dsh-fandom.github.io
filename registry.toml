@@ -13,8 +13,8 @@
 
 [site]
 org = "extreme-russian-dsh-fandom"
-index_title = "DSH plugins"
-index_title_ru = "Плагины DSH"
+# Market name as DSH shows it in the index list; a brand, so it stays untranslated.
+index_title = "EXTREME RUSSIAN DSH FANDOM"
 index_description = "DeepSeek Harness plugins by the extreme-russian-dsh-fandom community"
 index_description_ru = "Плагины DeepSeek Harness от сообщества extreme-russian-dsh-fandom"
 base_url = "https://extreme-russian-dsh-fandom.github.io"
