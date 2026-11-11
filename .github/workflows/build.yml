@@ -35,20 +35,7 @@ jobs:
         run: python3 scripts/build_index.py
 
       - name: Validate the generated index
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-
-          document = json.loads(Path("static/dsh-index.json").read_text(encoding="utf-8"))
-          assert document["entries"], "index has no entries"
-          for entry in document["entries"]:
-              version = entry["versions"][0]
-              assert entry["defaultVersion"] == version["version"], entry["name"]
-              assert len(version["source"]["commit"]) == 40, entry["name"]
-              assert version["source"]["commit"] in version["install"]["spec"], entry["name"]
-          print(len(document["entries"]), "plugins in the index")
-          PY
+        run: python3 scripts/validate_index.py
 
       - name: Install zola
         run: |

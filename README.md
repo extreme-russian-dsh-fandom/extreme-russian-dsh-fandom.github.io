@@ -89,6 +89,7 @@ so is the index format.
 ```bash
 python3 scripts/build_index.py           # build the data (network required)
 python3 scripts/build_index.py --check   # report only: who is published, who is not
+python3 scripts/validate_index.py        # schema checks for static/dsh-index.json
 zola serve                               # http://127.0.0.1:1111
 zola build
 ```
