@@ -570,7 +570,11 @@ def main() -> int:
             if entry["icon_text"] is not None:
                 (icons / f"{entry['repo']}.svg").write_text(entry["icon_text"], encoding="utf-8")
 
+        # Format 1, as validated by @deepseek-ai/dsh-plugin-market-index:
+        # `format` first, plugins under `plugins`, and no install/defaultVersion —
+        # DSH derives both from `source.commit` itself.
         document = {
+            "format": 1,
             # Localized strings may be an object, but `en` is mandatory there.
             "title": {"en": site["index_title"], "ru": site["index_title_ru"]},
             "description": {"en": site["index_description"], "ru": site["index_description_ru"]},
@@ -587,7 +591,7 @@ def main() -> int:
                 "labels": {key: {"title": value} for key, value in declared_labels.items()},
                 "sortKeys": {},
             },
-            "entries": [
+            "plugins": [
                 {
                     "name": entry["repo"],
                     "title": entry["title"],
@@ -596,25 +600,24 @@ def main() -> int:
                     "author": entry["author"],
                     "homepage": entry["homepage"],
                     "repository": {"url": entry["repository_url"]},
-                    "defaultVersion": entry["version"],
                     "metadata": {
                         "category": entry["category"],
                         "keywords": entry["keywords"],
                         "labels": entry["labels"],
-                        "sortKeys": {},
                     },
                     "versions": [
                         {
                             "version": entry["version"],
                             "publishTimestamp": entry["timestamp"],
-                            "install": {"spec": entry["install_spec"]},
                             "source": {
                                 "type": "git",
                                 "url": entry["repository_url"],
                                 "commit": entry["commit"],
                             },
-                            "engines": (
-                                {"dsh": entry["engines_dsh"]} if entry["engines_dsh"] else {}
+                            **(
+                                {"engines": {"dsh": entry["engines_dsh"]}}
+                                if entry["engines_dsh"]
+                                else {}
                             ),
                         }
                     ],
@@ -622,7 +625,7 @@ def main() -> int:
                 for entry in built_plugins
             ],
         }
-        for entry in document["entries"]:
+        for entry in document["plugins"]:
             for key in ("icon", "author", "homepage"):
                 if entry[key] is None:
                     del entry[key]
