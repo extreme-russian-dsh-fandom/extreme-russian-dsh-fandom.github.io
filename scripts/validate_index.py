@@ -77,16 +77,25 @@ def declarations(value, path: str, *, sort_key: bool = False) -> dict:
 def http_url(value, path: str, *, canonical: bool = False) -> str:
     text = string_at(value, path)
     parts = urlsplit(text)
-    if parts.scheme not in ("https:", "http:"):
+    if parts.scheme not in ("https", "http"):
         fail(path, "must use https: or http:")
     if parts.username or parts.password:
         fail(path, "must not contain credentials")
     if parts.query or parts.fragment:
         fail(path, "must not contain a query or fragment")
-    if canonical and parts.scheme != "https:":
+    if canonical and parts.scheme != "https":
         fail(path, "must use https:")
     if canonical and len([s for s in parts.path.split("/") if s]) < 2:
         fail(path, "must name a repository with at least two path segments")
+    return text
+
+
+def homepage_url(value, path: str) -> str:
+    """Absolute http(s) URL. Fragments and queries are allowed: npm homepages
+    often carry `#readme`."""
+    text = string_at(value, path)
+    if urlsplit(text).scheme not in ("https", "http"):
+        fail(path, "must use https: or http:")
     return text
 
 
@@ -178,7 +187,7 @@ def check_plugin(value, path: str, categories: dict, labels: dict) -> str:
     if "author" in value:
         string_at(value["author"], f"{path}.author")
     if "homepage" in value:
-        http_url(value["homepage"], f"{path}.homepage")
+        homepage_url(value["homepage"], f"{path}.homepage")
     if "repository" in value:
         repository = value["repository"]
         if not isinstance(repository, dict):

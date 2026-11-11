@@ -60,12 +60,14 @@ MCP servers go to `content/servers/<repo>/` the same way. Icons land in
 
 ## Index format
 
-`static/dsh-index.json` is the document DSH reads in the Discover tab. The schema
-was recovered from the DSH bundle (the `pluginMarket` zod schemas), so the field
-names are exactly what the client expects:
+`static/dsh-index.json` is a **format 1** document. The rules come from
+`@deepseek-ai/dsh-plugin-market-index` in the DSH bundle (`parseMarketIndex`);
+`scripts/validate_index.py` reimplements them, so a document that passes locally
+is not rejected with "not in a valid format".
 
 ```jsonc
 {
+  "format": 1,
   "title": { "en": "DSH plugins", "ru": "Плагины DSH" },
   "description": { "en": "…", "ru": "…" },
   "metadata": {
@@ -73,20 +75,18 @@ names are exactly what the client expects:
     "labels":     { "ru":  { "title": "Русский" } },
     "sortKeys":   {}
   },
-  "entries": [{
-    "name": "dsh-github-cli",       // unique identifier inside the index
+  "plugins": [{
+    "name": "dsh-github-cli",       // npm package name, unique in the index
     "title": "GitHub CLI",
     "description": { "en": "…", "ru": "…" },
     "icon": "icons/plugins/dsh-github-cli.svg",
     "author": "…",
     "homepage": "…",
-    "repository": { "url": "https://github.com/…" },
-    "defaultVersion": "0.2.0",
-    "metadata": { "category": "dev", "keywords": [], "labels": ["ru"], "sortKeys": {} },
+    "repository": { "url": "https://github.com/org/repo" },
+    "metadata": { "category": "dev", "keywords": [], "labels": ["ru"] },
     "versions": [{
       "version": "0.2.0",
       "publishTimestamp": 1793878451,
-      "install": { "spec": "github:org/repo#<sha>" },
       "source": { "type": "git", "url": "https://github.com/org/repo", "commit": "<sha>" },
       "engines": { "dsh": ">=0.9" }   // optional
     }]
@@ -94,12 +94,21 @@ names are exactly what the client expects:
 }
 ```
 
-What matters from the schema:
+What the validator actually enforces, and what is easy to get wrong:
 
-- `install.spec` is the string handed to `pnpm add`; `github:org/repo#<commit>`
-  pins the installation to the same commit recorded in `source.commit`;
-- `source.url` carries no credentials, query or fragment;
-- `source.commit` is lowercase 40-hex;
-- `icon` may be relative, it is resolved against the index URL;
-- a localized string is either a plain string or an object that **must** contain
-  `en` (`{"en": "…", "ru": "…"}`).
+- `format` is mandatory and must be `1`; plugins live in **`plugins`**, not
+  `entries`;
+- the file has **no** `install`, `defaultVersion`, `installation` or
+  `compatibility` — DSH derives them from `source.commit` and builds the pnpm
+  spec itself (`git+https://github.com/org/repo.git#<commit>`);
+- `title` is required; a localized string is either a plain string or an object
+  that **must** contain `en`;
+- `metadata.category` and every id in `metadata.labels` must be declared in the
+  top-level `metadata` block;
+- `version` is an exact SemVer, `publishTimestamp` is integer Unix seconds below
+  10^11;
+- `source.type: "git"` requires a canonical https URL with at least two path
+  segments and a lowercase 40-hex `commit`;
+- `icon` may be relative (resolved against the index URL) or a `data:` URL up to
+  32 KiB decoded;
+- `homepage` may carry `#readme` — unlike repository URLs, its fragment is kept.
