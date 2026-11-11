@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "macros/macros.html" as post_macros %}
+
+{% block main_content %}
+    {% set is_english = lang == "en" %}
+    {{ post_macros::page_header(title=term.name) }}
+
+    <ul>
+        {%- for page in term.pages %}
+            <li class="list-item">
+                <h1 class="title"><a href="{{ page.permalink | safe }}">{{ page.title }}</a></h1>
+                {% if page.description %}<div class="description">{{ page.description }}</div>{% endif %}
+            </li>
+        {% endfor -%}
+    </ul>
+
+    <p><a href="{% if is_english %}/categories/{% else %}/ru/categories/{% endif %}">{% if is_english %}all categories{% else %}все категории{% endif %}</a></p>
+{% endblock main_content %}

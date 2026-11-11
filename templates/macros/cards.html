@@ -1,0 +1,29 @@
+{% macro plugin_card(page) %}
+    <a class="plugin-card" href="{{ page.permalink | safe }}">
+        {% if page.extra.remote_image %}
+            <img class="plugin-icon"
+                 src="{{ page.extra.remote_image }}"
+                 alt=""
+                 width="40"
+                 height="40"
+                 loading="lazy" />
+        {% else %}
+            {# No icon in the repository: a letter avatar keeps the grid aligned. #}
+            <span class="plugin-icon plugin-fallback" aria-hidden="true">{{ page.title | truncate(length=1, end="") }}</span>
+        {% endif %}
+        <span class="plugin-body">
+            <span class="plugin-name">{{ page.title }}</span>
+            {% if page.description %}
+                <span class="plugin-desc">{{ page.description }}</span>
+            {% endif %}
+            <span class="plugin-meta">
+                {% if page.extra.version %}
+                    <span class="plugin-version">v{{ page.extra.version }}</span>
+                {% endif %}
+                {% if page.extra.category_title %}
+                    <span class="plugin-tag">{{ page.extra.category_title }}</span>
+                {% endif %}
+            </span>
+        </span>
+    </a>
+{% endmacro plugin_card %}

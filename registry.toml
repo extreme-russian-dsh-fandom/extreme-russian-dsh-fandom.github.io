@@ -1,0 +1,113 @@
+# The only hand-maintained file in the pipeline.
+#
+# Everything mechanical (version, commit, date, icon, patch, keywords) is derived
+# from the repositories themselves and is never typed by hand. What lives here is
+# editorial: what we publish, how it is titled, which category it belongs to.
+#
+# Statuses:
+#   published - goes to the catalog and to dsh-index.json
+#   pending   - known, but not published yet (empty repo, no version...)
+#   excluded  - deliberately not a plugin; the reason is in `reason`
+#
+# Catalog order follows `order` (ascending), then the repository name.
+
+[site]
+org = "extreme-russian-dsh-fandom"
+index_title = "DSH plugins"
+index_title_ru = "Плагины DSH"
+index_description = "DeepSeek Harness plugins by the extreme-russian-dsh-fandom community"
+index_description_ru = "Плагины DeepSeek Harness от сообщества extreme-russian-dsh-fandom"
+base_url = "https://extreme-russian-dsh-fandom.github.io"
+
+# Catalog categories: id -> English caption. Russian captions live in [categories_ru].
+[categories]
+dev = "Development"
+net = "Network"
+ui = "Interface"
+misc = "Misc"
+
+[categories_ru]
+dev = "Разработка"
+net = "Сеть и протоколы"
+ui = "Интерфейс"
+misc = "Разное"
+
+# Labels: id -> caption. An entry gets a label only when the condition holds
+# (see the script: `ru` is added when the repository has README.ru.md).
+[labels]
+ru = "Русский"
+
+[[plugin]]
+repo = "dsh-github-cli"
+title = "GitHub CLI"
+category = "dev"
+order = 10
+summary = "GitHub through gh: pull requests, issues, files and branches, plus local git for clones, checkouts and repository extraction."
+summary_ru = "GitHub через gh: PR, issues, файлы и ветки, плюс локальный git — клоны, checkout, извлечение репозитория."
+
+[[plugin]]
+repo = "dsh-usage-credits"
+title = "Usage & Credits"
+category = "ui"
+order = 20
+summary = "API credit balance and cache-aware session spend, converted from CNY to USD and to a chosen local currency at live rates."
+summary_ru = "Баланс кредитов API и расход сессии с учётом кэша: CNY → USD и в выбранную валюту по живому курсу."
+
+[[plugin]]
+repo = "dsh-wireshark-mcp"
+title = "Wireshark MCP"
+category = "net"
+order = 30
+summary = "Connects the Wireshark MCP server: pcap and traffic analysis through tshark."
+summary_ru = "Подключает MCP-сервер Wireshark: разбор pcap и трафика через tshark."
+
+[[plugin]]
+repo = "dsh-ssh-mcp"
+title = "SSH MCP"
+category = "net"
+order = 40
+summary = "Persistent SSH sessions: credential profiles, SFTP, sudo/root safeguards and fail2ban-aware retry limits."
+summary_ru = "Постоянные SSH-сессии: профили доступов, SFTP, защита от sudo/root-просчётов и лимиты ретраев с оглядкой на fail2ban."
+
+[[plugin]]
+repo = "dsh-linguist-tools"
+title = "Linguist Tools"
+category = "dev"
+order = 50
+summary = "Qt Linguist .ts files: inspect, translate, review and lint translations right from DSH."
+summary_ru = "Qt Linguist .ts: просмотр, перевод, ревью и линт файлов переводов прямо из DSH."
+
+[[plugin]]
+repo = "dsh-clippy-companion"
+title = "Clippy Companion"
+category = "ui"
+order = 60
+summary = "A draggable companion inside the chat area: switchable sprite packs, meme faces and context-pressure damage."
+summary_ru = "Перетаскиваемый компаньон в области чата: наборы спрайтов, мем-лица и урон от переполнения контекста."
+
+# MCP servers get their own catalog section and never appear in dsh-index.json,
+# because DSH does not install them as bundles.
+# [[server]]
+# repo = "mcp-example"
+# title = "Example MCP"
+# category = "misc"
+# order = 10
+# tags = ["example"]
+# summary = "Even shorter than the plugin summary."
+# summary_ru = "Ещё короче, по-русски."
+
+[[excluded]]
+repo = "EDSH"
+reason = "ECC fork: not a plugin, has no dsh object in the root package.json"
+
+[[excluded]]
+repo = "clanker-playground"
+reason = "no dsh- prefix; not published as a plugin"
+
+[[excluded]]
+repo = ".github"
+reason = "organization profile repository"
+
+[[excluded]]
+repo = "extreme-russian-dsh-fandom.github.io"
+reason = "this site"

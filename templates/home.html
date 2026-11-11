@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% import "macros/macros.html" as post_macros %}
+{% import "macros/cards.html" as cards %}
+
+{% block main_content %}
+    {% set is_english = lang == "en" %}
+    {{ post_macros::page_header(title=section.title) }}
+
+    {% if section.content %}
+        <div class="section-content">
+            {{ section.content | safe }}
+        </div>
+    {% endif %}
+
+    {# `get_section` always resolves the default language, so the path has to name
+       the translation explicitly. Otherwise the catalog links to /plugins/… from
+       the Russian page and the language silently resets. #}
+    {% set plugins_path = "plugins/_index.md" %}
+    {% set servers_path = "servers/_index.md" %}
+    {% if not is_english %}
+        {% set plugins_path = "plugins/_index.ru.md" %}
+        {% set servers_path = "servers/_index.ru.md" %}
+    {% endif %}
+
+    {% set plugins = get_section(path=plugins_path) %}
+    <h1 class="page-header">{% if is_english %}Latest plugins{% else %}Последние плагины{% endif %}</h1>
+    {% if plugins.pages %}
+        {# Newest first. `extra.recency` is "date-order", so ties inside one day
+           fall back to the catalog order instead of an arbitrary shuffle. #}
+        {% set latest = plugins.pages | sort(attribute="extra.recency") | reverse %}
+        <main class="plugin-grid">
+            {%- for page in latest | slice(end=4) %}
+                {{ cards::plugin_card(page=page) }}
+            {% endfor -%}
+        </main>
+        <p><a href="{% if is_english %}/plugins/{% else %}/ru/plugins/{% endif %}">{% if is_english %}All plugins →{% else %}Все плагины →{% endif %}</a></p>
+    {% else %}
+        <p>{% if is_english %}No plugins yet: the catalog has not been built.{% else %}Пока ни одного плагина: сборка каталога ещё не проходила.{% endif %}</p>
+    {% endif %}
+
+    {% set servers = get_section(path=servers_path) %}
+    {% if servers.pages %}
+        <h1 class="page-header">{% if is_english %}MCP servers{% else %}MCP-серверы{% endif %}</h1>
+        <main class="plugin-grid">
+            {%- for page in servers.pages %}
+                {{ cards::plugin_card(page=page) }}
+            {% endfor -%}
+        </main>
+    {% endif %}
+
+    <h1 class="page-header">{% if is_english %}Where to go next{% else %}Что дальше{% endif %}</h1>
+    <ul>
+        {% if is_english %}
+            <li><a href="/install/">How to install a plugin</a> — Discover or <code>dsh plugin add</code>.</li>
+            <li><a href="/categories/">All categories</a> — if you are looking by topic, not by name.</li>
+        {% else %}
+            <li><a href="/ru/install/">Как поставить плагин</a> — Discover или <code>dsh plugin add</code>.</li>
+            <li><a href="/ru/categories/">Все категории</a> — если ищете по теме, а не по названию.</li>
+        {% endif %}
+    </ul>
+{% endblock main_content %}

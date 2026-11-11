@@ -1,0 +1,14 @@
+# Zola output
+/public/
+/static/processed_images/
+
+# Produced by scripts/build_index.py; rebuilt on every deploy, never committed
+/content/plugins/*/
+/content/servers/*/
+/static/icons/plugins/
+/static/dsh-index.json
+
+# Local tooling leftovers
+.verify*/
+__pycache__/
+*.pyc

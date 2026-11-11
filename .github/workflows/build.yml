@@ -1,0 +1,74 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 3 * * *" # Daily: pick up new plugin versions from the organization.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  ZOLA_VERSION: "0.22.1"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build the catalog from the organization
+        env:
+          # The token only lifts the anonymous GitHub API limit. Reading public
+          # repositories needs no special scopes.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/build_index.py
+
+      - name: Validate the generated index
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          document = json.loads(Path("static/dsh-index.json").read_text(encoding="utf-8"))
+          assert document["entries"], "index has no entries"
+          for entry in document["entries"]:
+              version = entry["versions"][0]
+              assert entry["defaultVersion"] == version["version"], entry["name"]
+              assert len(version["source"]["commit"]) == 40, entry["name"]
+              assert version["source"]["commit"] in version["install"]["spec"], entry["name"]
+          print(len(document["entries"]), "plugins in the index")
+          PY
+
+      - name: Install zola
+        run: |
+          curl -fsSL "https://github.com/getzola/zola/releases/download/v${ZOLA_VERSION}/zola-v${ZOLA_VERSION}-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz -C /usr/local/bin zola
+          zola --version
+
+      - name: Build the site
+        run: zola build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

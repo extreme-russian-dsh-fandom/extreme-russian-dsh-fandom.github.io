@@ -1,0 +1,180 @@
+/* Typography.
+ *
+ * The theme ships Zed Text/Display and Space Grotesk — none of them have
+ * Cyrillic glyphs, so Russian text fell back to a default sans-serif per glyph
+ * and looked ragged next to the Latin words. These stacks cover Cyrillic, and
+ * the decorative faces stay only where they are safe (monospace code).
+ */
+
+:root {
+  --font-size-base: 15px;
+
+  --text-font: "Inter", "IBM Plex Sans", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans", "PT Sans", Roboto, "DejaVu Sans", Arial, sans-serif;
+  --header-font: "Inter", "IBM Plex Sans", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans", "PT Sans", Roboto, "DejaVu Sans", Arial, sans-serif;
+  --mono-text-font: "JetBrains Mono", "Cascadia Mono", "DejaVu Sans Mono",
+    Consolas, ui-monospace, monospace;
+  --code-font: "JetBrains Mono", "Cascadia Mono", "DejaVu Sans Mono", Consolas,
+    ui-monospace, monospace;
+}
+
+/* Plugin cards.
+ *
+ * Deliberately not the theme's `.card`: that one reserves a media banner, which
+ * made a 40px icon look like the most important thing on the page and left the
+ * iconless entries as a bare text block. Here the icon is a small avatar next
+ * to the text, and the whole card is the link.
+ */
+
+.plugin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+  margin: 1.2em 0 2.2em;
+}
+
+.plugin-card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color, rgba(127, 127, 127, 0.3));
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.plugin-card:hover,
+.plugin-card:focus-visible {
+  border-color: var(--text-0, currentColor);
+  background-color: var(--bg-1, rgba(127, 127, 127, 0.08));
+}
+
+.plugin-icon {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 9px;
+}
+
+/* Placeholder for plugins without an icon.svg in the repository. */
+.plugin-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-2, rgba(127, 127, 127, 0.18));
+  font-family: var(--header-font);
+  font-size: 1.15em;
+  font-weight: 600;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.plugin-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.plugin-name {
+  font-family: var(--header-font);
+  font-weight: 600;
+  font-size: 1.02em;
+  line-height: 1.25;
+}
+
+.plugin-desc {
+  font-size: 0.88em;
+  line-height: 1.45;
+  opacity: 0.8;
+}
+
+.plugin-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 0.76em;
+  opacity: 0.6;
+}
+
+.plugin-version {
+  font-family: var(--mono-text-font);
+}
+
+/* Navigation menu entries are written in lower case in the config and shown in
+ * caps here, so the menu reads as a row of buttons. */
+.nav-item {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.85em;
+  margin-right: 0.9em;
+}
+
+/* Language toggle in the navigation: both languages visible, the current one
+ * highlighted. It also sits a little apart from the search button. */
+
+.lang-toggle {
+  display: inline-flex;
+  margin: 0 1.1em 0 0.4em;
+  border: 1px solid var(--border-color, rgba(127, 127, 127, 0.4));
+  border-radius: 6px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.lang-option {
+  padding: 1px 8px;
+  font-size: 0.8em;
+  line-height: 1.7;
+  text-decoration: none;
+  opacity: 0.55;
+}
+
+.lang-option:hover {
+  opacity: 0.85;
+}
+
+.lang-option.is-active {
+  background-color: var(--bg-2, rgba(127, 127, 127, 0.22));
+  font-weight: 600;
+  opacity: 1;
+}
+
+.lang-toggle + .search-button {
+  margin-left: 0.2em;
+}
+
+/* Theme tag lists print the "#" through `.tags a::before`, but put no space
+ * between neighbouring tags. */
+.tags a + a {
+  margin-left: 0.55em;
+}
+
+/* Step screenshots in the installation sections. */
+main figure {
+  margin: 0.6em 0 1.6em;
+}
+
+main figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border-color, rgba(127, 127, 127, 0.3));
+  border-radius: 8px;
+}
+
+main figcaption {
+  margin-top: 0.45em;
+  font-size: 0.82em;
+  opacity: 0.65;
+}
+
+/* Detail tables on plugin pages: long hashes must not widen the layout. */
+main table td {
+  word-break: break-word;
+}

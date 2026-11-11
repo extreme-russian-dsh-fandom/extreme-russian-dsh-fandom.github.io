@@ -1,0 +1,141 @@
+{% set is_english = lang == "en" %}
+
+{# Same page in the other language: the two trees are mirror images of each
+   other, so the path alone is enough. `current_path` always has a trailing
+   slash, e.g. "/plugins/" or "/tags/cli/". #}
+{% set path = current_path | default(value="/") %}
+{% if is_english %}
+    {% set ru_path = "/ru" ~ path %}
+    {% set en_path = path %}
+{% else %}
+    {% set ru_path = path %}
+    {% set en_path = path | replace(from="/ru", to="") %}
+    {% if en_path == "" %}
+        {% set en_path = "/" %}
+    {% endif %}
+{% endif %}
+
+{# Zola cannot merge `extra` per language, so menus are stored per language. #}
+{% set menu = config.extra.menu.ru %}
+{% if is_english %}
+    {% set menu = config.extra.menu.en %}
+{% endif %}
+
+{# The site title must lead to the home page of the current language. #}
+{% set home_url = config.base_url %}
+{% if not is_english %}
+    {% set home_url = config.base_url ~ "/ru/" %}
+{% endif %}
+
+<nav>
+    <div class="left-nav">
+        {% if config.extra.logo %}
+            <a href="{{ home_url }}" class="logo">
+                <img alt="{{ config.title }}" src="{{ get_url(path=config.extra.logo) }}" />
+            </a>
+        {% else %}
+            <a href="{{ home_url }}">{{ config.title }}</a>
+        {% endif %}
+
+        <div class="socials">
+            {% if config.markdown.external_links_target_blank %}
+                {% set link_attrs = "rel='me noopener' target='_blank'" %}
+            {% else %}
+                {% set link_attrs = "rel='me'" %}
+            {% endif %}
+            {% for social in config.extra.socials %}
+                <a {{ link_attrs | safe }} href="{{ social.url }}" class="social">
+                    <img alt="{{ social.name }}"
+                         src="{{ get_url(path='icons/social/' ~ social.icon ~ '.svg') }}" />
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="right-nav">
+        {% for item in menu %}
+            <a class="nav-item" href={{ get_url(path=item.url) }}>{{ item.name }}</a>
+        {% endfor %}
+
+        <div class="lang-toggle" role="group" aria-label="Language">
+            <a href="{{ en_path }}"
+               class="lang-option{% if is_english %} is-active{% endif %}"
+               {% if is_english %}aria-current="true"{% endif %}
+               lang="en">EN</a>
+            <a href="{{ ru_path }}"
+               class="lang-option{% if not is_english %} is-active{% endif %}"
+               {% if not is_english %}aria-current="true"{% endif %}
+               lang="ru">RU</a>
+        </div>
+
+        {% if config.build_search_index %}
+            <button id="search-button"
+                    class="search-button"
+                    title="{% if is_english %}Search{% else %}Поиск{% endif %}">
+                <img src="{{ get_url(path='icons/search.svg') }}"
+                     alt="Search"
+                     class="search-icon" />
+            </button>
+
+            <div id="searchModal"
+                 class="search-modal js"
+                 role="dialog"
+                 aria-labelledby="modalTitle">
+                <div id="modal-content">
+                    <h1 id="modalTitle" class="page-header">
+                        {% if is_english %}Search{% else %}Поиск{% endif %}
+                    </h1>
+                    <div id="searchBar">
+                        <input id="searchInput"
+                               role="combobox"
+                               autocomplete="off"
+                               spellcheck="false"
+                               aria-expanded="false"
+                               aria-controls="results-container"
+                               placeholder="{% if is_english %}Search...{% else %}Поиск...{% endif %}" />
+                        <button id="clear-search" class="clear-button" title="Clear">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                                <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="results-container">
+                        <div id="results-info">
+                            {% if is_english %}
+                                <span id="zero_results" style="display: none;">No results</span>
+                                <span id="one_result" style="display: none;">1 result</span>
+                                <span id="many_results" style="display: none;">$NUMBER results</span>
+                            {% else %}
+                                <span id="zero_results" style="display: none;">Ничего не найдено</span>
+                                <span id="one_result" style="display: none;">1 результат</span>
+                                <span id="many_results" style="display: none;">результатов: $NUMBER</span>
+                            {% endif %}
+                        </div>
+                        <div id="results" role="listbox">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if config.extra.theme == "toggle" %}
+            <a id="dark-mode-toggle"
+               onclick="toggleTheme(); event.preventDefault();"
+               href="#">
+                <img src="{{ get_url(path='icons/sun.svg') }}" id="sun-icon" alt="Light" />
+                <img src="{{ get_url(path='icons/moon.svg') }}"
+                     id="moon-icon"
+                     style="filter: invert(1)"
+                     alt="Dark" />
+                <img src="{{ get_url(path='icons/auto.svg') }}"
+                     id="auto-icon"
+                     style="filter: invert(1)"
+                     alt="Auto" />
+            </a>
+
+            <script>
+                updateItemToggleTheme()
+            </script>
+        {% endif %}
+    </div>
+</nav>

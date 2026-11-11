@@ -1,0 +1,60 @@
+base_url = "https://extreme-russian-dsh-fandom.github.io"
+default_language = "en"
+
+theme = "apollo"
+
+build_search_index = true
+generate_feeds = false
+compile_sass = true
+minify_html = true
+
+[markdown.highlighting]
+light_theme = "github-light"
+dark_theme = "github-dark"
+
+# Search and taxonomies are configured per language: top-level values collide
+# with the per-language defaults. The index format stays at Zola's default
+# (`elasticlunr_javascript`), because that is what the theme's header loads.
+[languages.en]
+build_search_index = true
+title = "DSH plugins"
+description = "DeepSeek Harness plugin catalog by extreme-russian-dsh-fandom"
+taxonomies = [{ name = "categories" }]
+
+[languages.ru]
+build_search_index = true
+title = "DSH-плагины"
+description = "Каталог плагинов DeepSeek Harness от extreme-russian-dsh-fandom"
+taxonomies = [{ name = "categories" }]
+
+# Zola does not merge `extra` per language, so language-dependent bits are keyed
+# by language here and selected in templates via the `lang` variable.
+[extra]
+toc = false
+use_cdn = false
+theme = "toggle"
+fancy_code = false
+dynamic_note = false
+mathjax = false
+favicon = "/favicon.svg"
+stylesheets = ["custom.css"]
+
+socials = [
+  { name = "github", url = "https://github.com/extreme-russian-dsh-fandom", icon = "github" },
+]
+
+[extra.menu]
+en = [
+  { name = "plugins", url = "/plugins/", weight = 1 },
+  { name = "install", url = "/install/", weight = 2 },
+  { name = "categories", url = "/categories/", weight = 3 },
+]
+
+ru = [
+  { name = "плагины", url = "/ru/plugins/", weight = 1 },
+  { name = "установка", url = "/ru/install/", weight = 2 },
+  { name = "категории", url = "/ru/categories/", weight = 3 },
+]
+
+[extra.analytics]
+enabled = false
