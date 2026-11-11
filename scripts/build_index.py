@@ -516,6 +516,10 @@ def main() -> int:
 
         entry = {
             "repo": name,
+            # DSH matches an installed bundle to a market entry by the package
+            # name, not by the repository name, so the index must publish the
+            # name the installed copy actually declares.
+            "package_name": pick_strings(package.get("name")) or name,
             "kind": kind,
             "title": title,
             "description": description,
@@ -548,6 +552,8 @@ def main() -> int:
         note = f"v{version} @ {sha[:8]} ({kind}, date from {moment_kind})"
         if not spec.get("summary"):
             note += ", summary missing — package description used"
+        if entry["package_name"] != name:
+            note += f", index name is {entry['package_name']} (package.json), repo is {name}"
         report.append((name, "published", note))
 
     # ---- write ------------------------------------------------------------
@@ -594,7 +600,7 @@ def main() -> int:
             },
             "plugins": [
                 {
-                    "name": entry["repo"],
+                    "name": entry["package_name"],
                     "title": entry["title"],
                     "description": {"en": entry["description"]["en"], "ru": entry["description"]["ru"]},
                     "icon": entry["icon_url"].lstrip("/") or None,

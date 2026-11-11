@@ -26,6 +26,9 @@ up as `candidate` instead of disappearing silently.
 Mechanical (never typed by hand):
 
 - `version` — `package.json`;
+- `name` — `package.json` `name`, because DSH matches an installed bundle to a
+  market entry by package name; a package whose name differs from the repository
+  name is still published, but the report flags it (rename it and they agree);
 - `commit` — the tag's commit when the repository has tags, otherwise the branch
   head, full 40-character SHA;
 - `publishTimestamp` — the date of that commit, unix seconds;
